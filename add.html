@@ -234,6 +234,39 @@ function resizeImage(file, maxWidth) {
   });
 }
 
+let bgRemovalReady = null;
+
+function preloadBackgroundRemoval() {
+  bgRemovalReady = import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5');
+}
+preloadBackgroundRemoval();
+
+async function removeBackgroundNormalized(dataUrl) {
+  const { removeBackground } = await bgRemovalReady;
+  const blob = await (await fetch(dataUrl)).blob();
+  const cutoutBlob = await removeBackground(blob);
+  const cutoutUrl = URL.createObjectURL(cutoutBlob);
+
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const size = 1000;
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, size, size);
+      const scale = Math.min(size / img.width, size / img.height) * 0.9;
+      const w = img.width * scale;
+      const h = img.height * scale;
+      ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
+      resolve(canvas.toDataURL('image/jpeg', 0.85));
+    };
+    img.src = cutoutUrl;
+  });
+}
+
 function setupPhotoInput(boxId, inputId, onDone) {
   const box = document.getElementById(boxId);
   const input = document.getElementById(inputId);
@@ -241,10 +274,21 @@ function setupPhotoInput(boxId, inputId, onDone) {
   input.addEventListener('change', async () => {
     const file = input.files[0];
     if (!file) return;
+
     box.innerHTML = `<span>Processing…</span>`;
-    const dataUrl = await resizeImage(file, 1200);
-    const base64 = dataUrl.split(',')[1];
-    box.innerHTML = `<img src="${dataUrl}">`;
+    const resized = await resizeImage(file, 1200);
+
+    let finalUrl = resized;
+    try {
+      box.innerHTML = `<span>Removing background…</span>`;
+      finalUrl = await removeBackgroundNormalized(resized);
+    } catch (err) {
+      console.error('Background removal failed, using original photo:', err);
+      finalUrl = resized;
+    }
+
+    const base64 = finalUrl.split(',')[1];
+    box.innerHTML = `<img src="${finalUrl}">`;
     onDone(base64);
   });
 }
