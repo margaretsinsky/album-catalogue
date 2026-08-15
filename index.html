@@ -40,7 +40,11 @@
   border: 1px solid #ddd;
   scroll-snap-align: center;
   cursor: pointer;
-  }
+  transition: transform 0.2s ease;
+}
+.carousel-cover.selected {
+  transform: scale(1.08);
+}
   .entry .title { font-size: 1.15rem; margin: 0 0 4px; }
   .entry .artist { font-size: 1rem; color: #333; margin: 0 0 8px; }
   .entry .meta {
@@ -262,6 +266,7 @@ function flipCover(imgEl, i) {
   const showingFront = imgEl.dataset.showing === 'front';
   imgEl.src = driveImageUrl(showingFront ? entry.BackPhotoURL : entry.FrontPhotoURL);
   imgEl.dataset.showing = showingFront ? 'back' : 'front';
+  imgEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
 }
 function flipListCover(imgEl, i) {
   const entry = visibleEntries[i];
@@ -273,6 +278,11 @@ function flipListCover(imgEl, i) {
 function showCarouselDetails(i) {
   const entry = visibleEntries[i];
   if (!entry) return;
+
+  document.querySelectorAll('.carousel-cover.selected').forEach(el => el.classList.remove('selected'));
+  const selectedImg = document.querySelector(`.carousel-cover[data-index="${i}"]`);
+  if (selectedImg) selectedImg.classList.add('selected');
+
   document.getElementById('carouselDetails').innerHTML = `
     <div class="entry">
       <p class="title">${escapeHtml(entry.Album)}</p>
