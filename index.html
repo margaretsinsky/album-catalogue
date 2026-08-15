@@ -134,22 +134,47 @@ let currentView = 'carousel';
    
    renderCarousel();
    
-   entriesEl.innerHTML = visibleEntries.map((entry, i) => `
-   <div class="entry">
-   <img class="cover" src="${driveImageUrl(entry.FrontPhotoURL)}" alt="${escapeHtml(entry.Album)} cover"
-         loading="lazy" data-showing="front" style="cursor: pointer;"
-         onclick="flipListCover(this, ${i})">
-    <p class="title">${escapeHtml(entry.Album)}</p>
-    <p class="artist">${escapeHtml(entry.Artist)}</p>
-    <p class="meta">${escapeHtml(entry.Genre)} · ${escapeHtml(String(entry.Year))}</p>
-    ${entry.Note ? `<p class="note">${escapeHtml(entry.Note)}</p>` : ''}
-  </div>
- `).join('');
+   renderListView();
 
   } catch (err) {
   clearTimeout(slowLoadTimer);
   statusEl.textContent = 'Could not load catalog. Check your connection and refresh.';
   }
+}
+
+function applySearch() {
+  const query = document.getElementById('searchInput').value.trim().toLowerCase();
+
+  if (!query) {
+    visibleEntries = allEntries;
+  } else {
+    visibleEntries = allEntries.filter(entry => {
+      const haystack = [
+        entry.Artist, entry.Album, entry.Genre, entry.Year, entry.Note
+      ].map(v => String(v ?? '').toLowerCase()).join(' ');
+      return haystack.includes(query);
+    });
+  }
+
+  renderListView();
+  if (currentView === 'carousel') {
+    renderCarousel();
+  }
+}
+
+function renderListView() {
+  const entriesEl = document.getElementById('entries');
+  entriesEl.innerHTML = visibleEntries.map((entry, i) => `
+    <div class="entry">
+      <img class="cover" src="${driveImageUrl(entry.FrontPhotoURL)}" alt="${escapeHtml(entry.Album)} cover"
+           loading="lazy" data-showing="front" style="cursor: pointer;"
+           onclick="flipListCover(this, ${i})">
+      <p class="title">${escapeHtml(entry.Album)}</p>
+      <p class="artist">${escapeHtml(entry.Artist)}</p>
+      <p class="meta">${escapeHtml(entry.Genre)} · ${escapeHtml(String(entry.Year))}</p>
+      ${entry.Note ? `<p class="note">${escapeHtml(entry.Note)}</p>` : ''}
+    </div>
+  `).join('');
 }
 
 function toggleView() {
