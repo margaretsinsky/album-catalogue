@@ -156,8 +156,8 @@ function renderCarousel() {
   const track = document.getElementById('carouselTrack');
   track.innerHTML = allEntries.map((entry, i) => `
     <img class="carousel-cover" src="${driveImageUrl(entry.FrontPhotoURL)}"
-         alt="${escapeHtml(entry.Album)}" data-index="${i}"
-         onclick="showCarouselDetails(${i})">
+         alt="${escapeHtml(entry.Album)}" data-index="${i}" data-showing="front"
+         onclick="flipCover(this, ${i})">
   `).join('');
 
   track.querySelectorAll('.carousel-cover').forEach(img => {
@@ -190,6 +190,13 @@ function renderCarousel() {
       showCarouselDetails(closest);
     }, 100);
   });
+}
+
+function flipCover(imgEl, i) {
+  const entry = allEntries[i];
+  const showingFront = imgEl.dataset.showing === 'front';
+  imgEl.src = driveImageUrl(showingFront ? entry.BackPhotoURL : entry.FrontPhotoURL);
+  imgEl.dataset.showing = showingFront ? 'back' : 'front';
 }
 
 function showCarouselDetails(i) {
