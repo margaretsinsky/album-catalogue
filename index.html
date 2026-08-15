@@ -128,15 +128,17 @@ document.getElementById('addLink').textContent = `Add ${ITEM_NAME}`;
 
     allEntries = data;
    
-    entriesEl.innerHTML = data.map(entry => `
-      <div class="entry">
-        <img class="cover" src="${driveImageUrl(entry.FrontPhotoURL)}" alt="${escapeHtml(entry.Album)} cover" loading="lazy">
-        <p class="title">${escapeHtml(entry.Album)}</p>
-        <p class="artist">${escapeHtml(entry.Artist)}</p>
-        <p class="meta">${escapeHtml(entry.Genre)} · ${escapeHtml(String(entry.Year))}</p>
-        ${entry.Note ? `<p class="note">${escapeHtml(entry.Note)}</p>` : ''}
-      </div>
-    `).join('');
+    entriesEl.innerHTML = data.map((entry, i) => `
+   <div class="entry">
+    <img class="cover" src="${driveImageUrl(entry.FrontPhotoURL)}" alt="${escapeHtml(entry.Album)} cover"
+         loading="lazy" data-showing="front" style="cursor: pointer;"
+         onclick="flipListCover(this, ${i})">
+    <p class="title">${escapeHtml(entry.Album)}</p>
+    <p class="artist">${escapeHtml(entry.Artist)}</p>
+    <p class="meta">${escapeHtml(entry.Genre)} · ${escapeHtml(String(entry.Year))}</p>
+    ${entry.Note ? `<p class="note">${escapeHtml(entry.Note)}</p>` : ''}
+  </div>
+ `).join('');
 
   } catch (err) {
   clearTimeout(slowLoadTimer);
@@ -201,6 +203,13 @@ function renderCarousel() {
 }
 
 function flipCover(imgEl, i) {
+  const entry = allEntries[i];
+  const showingFront = imgEl.dataset.showing === 'front';
+  imgEl.src = driveImageUrl(showingFront ? entry.BackPhotoURL : entry.FrontPhotoURL);
+  imgEl.dataset.showing = showingFront ? 'back' : 'front';
+}
+
+function flipListCover(imgEl, i) {
   const entry = allEntries[i];
   const showingFront = imgEl.dataset.showing === 'front';
   imgEl.src = driveImageUrl(showingFront ? entry.BackPhotoURL : entry.FrontPhotoURL);
