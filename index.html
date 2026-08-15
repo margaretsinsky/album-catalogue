@@ -63,15 +63,17 @@
   <a href="add.html" id="addLink">Add</a>
 </header>
 
-<input type="text" id="searchInput" placeholder="Search" style="margin-bottom: 16px;" oninput="applySearch()">
-
-<select id="sortSelect" onchange="applySearch()" style="margin-bottom: 16px; font-family: 'Courier New', monospace; font-size: 0.85rem; padding: 6px;">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px;">
+  <input type="text" id="searchInput" placeholder="Search" style="flex: 1; margin-bottom: 0;" oninput="applySearch()">
+  <select id="sortSelect" onchange="applySearch()" style="font-family: 'Courier New', monospace; font-size: 0.75rem; padding: 4px 6px; width: auto;">
+   
   <option value="default">Sort: default</option>
   <option value="artist">Sort: artist A–Z</option>
   <option value="album">Sort: album A–Z</option>
   <option value="year-asc">Sort: year (oldest first)</option>
   <option value="year-desc">Sort: year (newest first)</option>
 </select>
+</div>
 
 <div class="row" style="margin-bottom: 20px;">
   <button class="secondary" id="viewToggle" onclick="toggleView()">Switch to list</button>
