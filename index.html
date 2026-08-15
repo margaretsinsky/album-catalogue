@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitleTag">Catalogue</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: #fff;
+    color: #111;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+  }
+  a { color: #111; }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 2px solid #111;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.1rem; margin: 0; font-weight: normal; letter-spacing: 0.5px; }
+  header a { font-size: 0.85rem; text-decoration: none; border: 1px solid #111; padding: 4px 10px; }
+
+  #status { font-family: 'Courier New', monospace; font-size: 0.85rem; color: #666; }
+
+  .entry {
+    border-bottom: 1px solid #ddd;
+    padding: 16px 0;
+  }
+  .entry .title { font-size: 1.15rem; margin: 0 0 4px; }
+  .entry .artist { font-size: 1rem; color: #333; margin: 0 0 8px; }
+  .entry .meta {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    color: #666;
+  }
+  .entry .note {
+    font-size: 0.9rem;
+    color: #444;
+    margin-top: 6px;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1 id="pageTitle">Catalogue</h1>
+  <a href="add.html" id="addLink">Add</a>
+</header>
+
+<div id="status">Loading…</div>
+<div id="entries"></div>
+
+<script src="config.js"></script>
+<script>
+document.getElementById('pageTitleTag').textContent = `${ITEM_NAME_PLURAL} Catalogue`;
+document.getElementById('pageTitle').textContent = `${ITEM_NAME_PLURAL} Catalogue`;
+document.getElementById('addLink').textContent = `Add ${ITEM_NAME}`;
+
+async function loadEntries() {
+  const pw = await ensureAuthenticated();
+  const statusEl = document.getElementById('status');
+  const entriesEl = document.getElementById('entries');
+
+  try {
+    const res = await fetch(`${API_URL}?secret=${encodeURIComponent(pw)}`);
+    const data = await res.json();
+
+    if (data.status === 'error') {
+      statusEl.textContent = 'Wrong password. Refresh the page and try again.';
+      sessionStorage.removeItem('catalogue_pw');
+      return;
+    }
+
+    if (!Array.isArray(data) || data.length === 0) {
+      statusEl.textContent = `No ${ITEM_NAME_PLURAL.toLowerCase()} yet. Add your first one.`;
+      return;
+    }
+
+    statusEl.textContent = `${data.length} ${data.length === 1 ? ITEM_NAME.toLowerCase() : ITEM_NAME_PLURAL.toLowerCase()}`;
+
+    // Default sort: Genre, then Artist, then Album
+    data.sort((a, b) => {
+      return (a.Genre || '').localeCompare(b.Genre || '')
+        || (a.Artist || '').localeCompare(b.Artist || '')
+        || (a.Album || '').localeCompare(b.Album || '');
+    });
+
+    entriesEl.innerHTML = data.map(entry => `
+      <div class="entry">
+        <p class="title">${escapeHtml(entry.Album)}</p>
+        <p class="artist">${escapeHtml(entry.Artist)}</p>
+        <p class="meta">${escapeHtml(entry.Genre)} · ${escapeHtml(String(entry.Year))}</p>
+        ${entry.Note ? `<p class="note">${escapeHtml(entry.Note)}</p>` : ''}
+      </div>
+    `).join('');
+
+  } catch (err) {
+    statusEl.textContent = 'Could not load catalogue. Check your connection and refresh.';
+  }
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str ?? '';
+  return div.innerHTML;
+}
+
+loadEntries();
+</script>
+</body>
+</html>
