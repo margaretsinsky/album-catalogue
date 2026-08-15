@@ -74,7 +74,7 @@ async function loadEntries() {
 
     if (data.status === 'error') {
       statusEl.textContent = 'Wrong password. Refresh the page and try again.';
-      sessionStorage.removeItem('catalogue_pw');
+      sessionStorage.removeItem('catalog_pw');
       return;
     }
 
