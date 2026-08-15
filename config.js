@@ -1,7 +1,6 @@
 // ===== APP CONFIG =====
 // Change ITEM_NAME here to rename "catalogued item" everywhere at once.
 const ITEM_NAME = "Album";
-const ITEM_NAME_PLURAL = "Albums";
 
 const API_URL = "PASTE_YOUR_EXEC_URL_HERE";
 
