@@ -2,7 +2,7 @@
 // Change ITEM_NAME here to rename "cataloged item" everywhere at once.
 const ITEM_NAME = "Album";
 
-const API_URL = "PASTE_YOUR_EXEC_URL_HERE";
+const API_URL = "https://script.google.com/macros/s/AKfycbwm3sE3qYU45b-VKAeT7XywuUKAW3nawtXtooKI2IF_hFuKvHAo06aP7N50FvI5ruc_/exec";
 
 // ===== PASSWORD GATE =====
 // Checks sessionStorage for a password; if missing, prompts and verifies it
