@@ -1,4 +1,3 @@
-javascript
 // ===== APP CONFIG =====
 // Change ITEM_NAME here to rename "catalogued item" everywhere at once.
 const ITEM_NAME = "Album";
