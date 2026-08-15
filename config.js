@@ -11,7 +11,7 @@ async function ensureAuthenticated() {
   let pw = sessionStorage.getItem("catalogue_pw");
 
   if (!pw) {
-    pw = prompt(`Enter the password to access the ${ITEM_NAME} Catalog:`);
+    pw = prompt(`Enter the password to access The Whole ${ITEM_NAME} Catalog:`);
     if (!pw) {
       document.body.innerHTML = "<p>Password required.</p>";
       throw new Error("No password entered");
