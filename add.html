@@ -213,21 +213,39 @@ function validateAndGo(inputId, errorId, nextStep) {
   goTo(nextStep);
 }
 
+function resizeImage(file, maxWidth) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxWidth / img.width);
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        resolve(dataUrl);
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 function setupPhotoInput(boxId, inputId, onDone) {
   const box = document.getElementById(boxId);
   const input = document.getElementById(inputId);
   box.addEventListener('click', () => input.click());
-  input.addEventListener('change', () => {
+  input.addEventListener('change', async () => {
     const file = input.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const fullDataUrl = reader.result;
-      const base64 = fullDataUrl.split(',')[1];
-      box.innerHTML = `<img src="${fullDataUrl}">`;
-      onDone(base64);
-    };
-    reader.readAsDataURL(file);
+    box.innerHTML = `<span>Processing…</span>`;
+    const dataUrl = await resizeImage(file, 1200);
+    const base64 = dataUrl.split(',')[1];
+    box.innerHTML = `<img src="${dataUrl}">`;
+    onDone(base64);
   });
 }
 
