@@ -86,7 +86,7 @@ async function loadEntries() {
     }
 
     statusEl.textContent = '';
-    const plural = data.length === 1 ? ITEM_NAME : `${ITEM_NAME}s`;
+    const plural = data.length === 1 ? ITEM_NAME.toLowerCase() : `${ITEM_NAME.toLowerCase()}s`;
     document.getElementById('countFooter').textContent = `${data.length} ${plural}`;
 
     // Default sort: Genre, then Artist, then Album
