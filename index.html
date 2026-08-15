@@ -64,15 +64,15 @@
 </header>
 
 <div class="row" style="margin-bottom: 20px;">
-  <button class="secondary" id="viewToggle" onclick="toggleView()">Switch to carousel</button>
+  <button class="secondary" id="viewToggle" onclick="toggleView()">Switch to list</button>
   <span id="status">Loading…</span>
 </div>
 
-<div id="listView">
+<div id="listView" style="display: none;">
   <div id="entries"></div>
 </div>
 
-<div id="carouselView" style="display: none;">
+<div id="carouselView">
   <div id="carouselTrack" style="display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 8px 0 20px;"></div>
   <div id="carouselDetails" style="margin-top: 20px; min-height: 100px;"></div>
 </div>
@@ -86,7 +86,7 @@ document.getElementById('pageTitle').textContent = `The Whole ${ITEM_NAME} Catal
 document.getElementById('addLink').textContent = `Add ${ITEM_NAME}`;
 
  let allEntries = [];
- let currentView = 'list';
+ let currentView = 'carousel';
  
  async function loadEntries() {
   const pw = await ensureAuthenticated();
@@ -128,9 +128,11 @@ document.getElementById('addLink').textContent = `Add ${ITEM_NAME}`;
 
     allEntries = data;
    
-    entriesEl.innerHTML = data.map((entry, i) => `
+   renderCarousel();
+   
+   entriesEl.innerHTML = data.map((entry, i) => `
    <div class="entry">
-    <img class="cover" src="${driveImageUrl(entry.FrontPhotoURL)}" alt="${escapeHtml(entry.Album)} cover"
+   <img class="cover" src="${driveImageUrl(entry.FrontPhotoURL)}" alt="${escapeHtml(entry.Album)} cover"
          loading="lazy" data-showing="front" style="cursor: pointer;"
          onclick="flipListCover(this, ${i})">
     <p class="title">${escapeHtml(entry.Album)}</p>
