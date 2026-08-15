@@ -205,14 +205,13 @@ function renderCarousel() {
 }
 
 function flipCover(imgEl, i) {
-  const entry = allEntries[i];
+  const entry = visibleEntries[i];
   const showingFront = imgEl.dataset.showing === 'front';
   imgEl.src = driveImageUrl(showingFront ? entry.BackPhotoURL : entry.FrontPhotoURL);
   imgEl.dataset.showing = showingFront ? 'back' : 'front';
 }
-
 function flipListCover(imgEl, i) {
-  const entry = allEntries[i];
+  const entry = visibleEntries[i];
   const showingFront = imgEl.dataset.showing === 'front';
   imgEl.src = driveImageUrl(showingFront ? entry.BackPhotoURL : entry.FrontPhotoURL);
   imgEl.dataset.showing = showingFront ? 'back' : 'front';
