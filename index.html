@@ -57,6 +57,7 @@
 
 <div id="status">Loading…</div>
 <div id="entries"></div>
+<div id="countFooter" style="text-align: right; font-family: 'Courier New', monospace; font-size: 0.8rem; color: #666; margin-top: 20px;"></div>
 
 <script src="config.js"></script>
 <script>
@@ -84,7 +85,9 @@ async function loadEntries() {
       return;
     }
 
-    statusEl.textContent = `${data.length} ${data.length === 1 ? ITEM_NAME.toLowerCase() : ITEM_NAME.toLowerCase()}`;
+    statusEl.textContent = '';
+    const plural = data.length === 1 ? ITEM_NAME : `${ITEM_NAME}s`;
+    document.getElementById('countFooter').textContent = `${data.length} ${plural}`;
 
     // Default sort: Genre, then Artist, then Album
     data.sort((a, b) => {
