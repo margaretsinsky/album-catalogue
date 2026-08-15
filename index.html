@@ -63,6 +63,8 @@
   <a href="add.html" id="addLink">Add</a>
 </header>
 
+<input type="text" id="searchInput" placeholder="Search" style="margin-bottom: 16px;" oninput="applySearch()">
+
 <div class="row" style="margin-bottom: 20px;">
   <button class="secondary" id="viewToggle" onclick="toggleView()">Switch to list</button>
   <span id="status">Loading…</span>
@@ -85,8 +87,9 @@ document.getElementById('pageTitleTag').textContent = `The Whole ${ITEM_NAME} Ca
 document.getElementById('pageTitle').textContent = `The Whole ${ITEM_NAME} Catalog`;
 document.getElementById('addLink').textContent = `Add ${ITEM_NAME}`;
 
- let allEntries = [];
- let currentView = 'carousel';
+let allEntries = [];
+let visibleEntries = [];
+let currentView = 'carousel';
  
  async function loadEntries() {
   const pw = await ensureAuthenticated();
@@ -166,22 +169,19 @@ function toggleView() {
 
 function renderCarousel() {
   const track = document.getElementById('carouselTrack');
-  track.innerHTML = allEntries.map((entry, i) => `
+  track.innerHTML = visibleEntries.map((entry, i) => `
     <img class="carousel-cover" src="${driveImageUrl(entry.FrontPhotoURL)}"
          alt="${escapeHtml(entry.Album)}" data-index="${i}" data-showing="front"
          onclick="flipCover(this, ${i})">
   `).join('');
-
   track.querySelectorAll('.carousel-cover').forEach(img => {
     img.addEventListener('load', () => {
       if (track.dataset.initialized) return;
     });
   });
-
-  if (allEntries.length > 0) {
+  if (visibleEntries.length > 0) {
     showCarouselDetails(0);
   }
-
   let scrollTimeout;
   track.addEventListener('scroll', () => {
     clearTimeout(scrollTimeout);
