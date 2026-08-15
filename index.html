@@ -93,8 +93,15 @@ document.getElementById('addLink').textContent = `Add ${ITEM_NAME}`;
   const statusEl = document.getElementById('status');
   const entriesEl = document.getElementById('entries');
 
+  const slowLoadTimer = setTimeout(() => {
+  statusEl.textContent = 'Waking up the catalog… this can take up to 30 seconds after being idle.';
+  }, 2000);
+
   try {
     const res = await fetch(`${API_URL}?secret=${encodeURIComponent(pw)}`);
+    
+    clearTimeout(slowLoadTimer);
+    
     const data = await res.json();
 
     if (data.status === 'error') {
@@ -132,7 +139,8 @@ document.getElementById('addLink').textContent = `Add ${ITEM_NAME}`;
     `).join('');
 
   } catch (err) {
-    statusEl.textContent = 'Could not load catalog. Check your connection and refresh.';
+  clearTimeout(slowLoadTimer);
+  statusEl.textContent = 'Could not load catalog. Check your connection and refresh.';
   }
 }
 
