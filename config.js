@@ -8,7 +8,7 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwm3sE3qYU45b-VKAeT7Xyw
 // Checks sessionStorage for a password; if missing, prompts and verifies it
 // by making a lightweight request to the backend.
 async function ensureAuthenticated() {
-  let pw = sessionStorage.getItem("catalogue_pw");
+  let pw = sessionStorage.getItem("catalog_pw");
 
   if (!pw) {
     pw = prompt(`Enter the password to access The Whole ${ITEM_NAME} Catalog:`);
@@ -16,7 +16,7 @@ async function ensureAuthenticated() {
       document.body.innerHTML = "<p>Password required.</p>";
       throw new Error("No password entered");
     }
-    sessionStorage.setItem("catalogue_pw", pw);
+    sessionStorage.setItem("catalog_pw", pw);
   }
 
   return pw;
