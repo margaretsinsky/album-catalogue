@@ -65,6 +65,14 @@
 
 <input type="text" id="searchInput" placeholder="Search" style="margin-bottom: 16px;" oninput="applySearch()">
 
+<select id="sortSelect" onchange="applySearch()" style="margin-bottom: 16px; font-family: 'Courier New', monospace; font-size: 0.85rem; padding: 6px;">
+  <option value="default">Sort: default</option>
+  <option value="artist">Sort: artist A–Z</option>
+  <option value="album">Sort: album A–Z</option>
+  <option value="year-asc">Sort: year (oldest first)</option>
+  <option value="year-desc">Sort: year (newest first)</option>
+</select>
+
 <div class="row" style="margin-bottom: 20px;">
   <button class="secondary" id="viewToggle" onclick="toggleView()">Switch to list</button>
   <span id="status">Loading…</span>
@@ -122,13 +130,6 @@ let currentView = 'carousel';
     const plural = data.length === 1 ? ITEM_NAME.toLowerCase() : `${ITEM_NAME.toLowerCase()}s`;
     document.getElementById('countFooter').textContent = `${data.length} ${plural}`;
 
-    // Default sort: Genre, then Artist, then Album
-    data.sort((a, b) => {
-      return (a.Genre || '').localeCompare(b.Genre || '')
-        || (a.Artist || '').localeCompare(b.Artist || '')
-        || (a.Album || '').localeCompare(b.Album || '');
-    });
-
     allEntries = data;
     visibleEntries = data;
    
@@ -156,10 +157,34 @@ function applySearch() {
     });
   }
 
+  applySort();
   renderListView();
   if (currentView === 'carousel') {
     renderCarousel();
   }
+}
+
+function applySort() {
+  const sortBy = document.getElementById('sortSelect').value;
+
+  visibleEntries.sort((a, b) => {
+    if (sortBy === 'artist') {
+      return (a.Artist || '').localeCompare(b.Artist || '');
+    }
+    if (sortBy === 'album') {
+      return (a.Album || '').localeCompare(b.Album || '');
+    }
+    if (sortBy === 'year-asc') {
+      return (Number(a.Year) || 0) - (Number(b.Year) || 0);
+    }
+    if (sortBy === 'year-desc') {
+      return (Number(b.Year) || 0) - (Number(a.Year) || 0);
+    }
+    // default
+    return (a.Genre || '').localeCompare(b.Genre || '')
+      || (a.Artist || '').localeCompare(b.Artist || '')
+      || (a.Album || '').localeCompare(b.Album || '');
+  });
 }
 
 function renderListView() {
