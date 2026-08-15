@@ -130,10 +130,11 @@ let currentView = 'carousel';
     });
 
     allEntries = data;
+    visibleEntries = data;
    
    renderCarousel();
    
-   entriesEl.innerHTML = data.map((entry, i) => `
+   entriesEl.innerHTML = visibleEntries.map((entry, i) => `
    <div class="entry">
    <img class="cover" src="${driveImageUrl(entry.FrontPhotoURL)}" alt="${escapeHtml(entry.Album)} cover"
          loading="lazy" data-showing="front" style="cursor: pointer;"
