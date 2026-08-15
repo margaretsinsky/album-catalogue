@@ -85,7 +85,10 @@ document.getElementById('pageTitleTag').textContent = `The Whole ${ITEM_NAME} Ca
 document.getElementById('pageTitle').textContent = `The Whole ${ITEM_NAME} Catalog`;
 document.getElementById('addLink').textContent = `Add ${ITEM_NAME}`;
 
-async function loadEntries() {
+ let allEntries = [];
+ let currentView = 'list';
+ 
+ async function loadEntries() {
   const pw = await ensureAuthenticated();
   const statusEl = document.getElementById('status');
   const entriesEl = document.getElementById('entries');
@@ -116,6 +119,8 @@ async function loadEntries() {
         || (a.Album || '').localeCompare(b.Album || '');
     });
 
+    allEntries = data;
+   
     entriesEl.innerHTML = data.map(entry => `
       <div class="entry">
         <img class="cover" src="${driveImageUrl(entry.FrontPhotoURL)}" alt="${escapeHtml(entry.Album)} cover" loading="lazy">
@@ -129,6 +134,75 @@ async function loadEntries() {
   } catch (err) {
     statusEl.textContent = 'Could not load catalog. Check your connection and refresh.';
   }
+}
+
+function toggleView() {
+  const btn = document.getElementById('viewToggle');
+  if (currentView === 'list') {
+    currentView = 'carousel';
+    document.getElementById('listView').style.display = 'none';
+    document.getElementById('carouselView').style.display = 'block';
+    btn.textContent = 'Switch to list';
+    renderCarousel();
+  } else {
+    currentView = 'list';
+    document.getElementById('listView').style.display = 'block';
+    document.getElementById('carouselView').style.display = 'none';
+    btn.textContent = 'Switch to carousel';
+  }
+}
+
+function renderCarousel() {
+  const track = document.getElementById('carouselTrack');
+  track.innerHTML = allEntries.map((entry, i) => `
+    <img class="carousel-cover" src="${driveImageUrl(entry.FrontPhotoURL)}"
+         alt="${escapeHtml(entry.Album)}" data-index="${i}"
+         onclick="showCarouselDetails(${i})">
+  `).join('');
+
+  track.querySelectorAll('.carousel-cover').forEach(img => {
+    img.addEventListener('load', () => {
+      if (track.dataset.initialized) return;
+    });
+  });
+
+  if (allEntries.length > 0) {
+    showCarouselDetails(0);
+  }
+
+  let scrollTimeout;
+  track.addEventListener('scroll', () => {
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      const trackRect = track.getBoundingClientRect();
+      const center = trackRect.left + trackRect.width / 2;
+      let closest = 0;
+      let closestDist = Infinity;
+      track.querySelectorAll('.carousel-cover').forEach((img, i) => {
+        const rect = img.getBoundingClientRect();
+        const imgCenter = rect.left + rect.width / 2;
+        const dist = Math.abs(imgCenter - center);
+        if (dist < closestDist) {
+          closestDist = dist;
+          closest = i;
+        }
+      });
+      showCarouselDetails(closest);
+    }, 100);
+  });
+}
+
+function showCarouselDetails(i) {
+  const entry = allEntries[i];
+  if (!entry) return;
+  document.getElementById('carouselDetails').innerHTML = `
+    <div class="entry">
+      <p class="title">${escapeHtml(entry.Album)}</p>
+      <p class="artist">${escapeHtml(entry.Artist)}</p>
+      <p class="meta">${escapeHtml(entry.Genre)} · ${escapeHtml(String(entry.Year))}</p>
+      ${entry.Note ? `<p class="note">${escapeHtml(entry.Note)}</p>` : ''}
+    </div>
+  `;
 }
 
 function escapeHtml(str) {
