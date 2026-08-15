@@ -1,0 +1,289 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Album</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: #fff;
+    color: #111;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+  }
+  a { color: #111; }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 2px solid #111;
+    padding-bottom: 10px;
+    margin-bottom: 40px;
+  }
+  header h1 { font-size: 1.1rem; margin: 0; font-weight: normal; letter-spacing: 0.5px; }
+  header a { font-size: 0.85rem; text-decoration: none; border: 1px solid #111; padding: 4px 10px; }
+
+  .step { display: none; }
+  .step.active { display: block; }
+
+  .step-label {
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    color: #666;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .step h2 { font-size: 1.4rem; font-weight: normal; margin: 0 0 24px; }
+
+  input[type="text"], input[type="number"] {
+    width: 100%;
+    font-size: 1.1rem;
+    font-family: Georgia, serif;
+    padding: 10px 2px;
+    border: none;
+    border-bottom: 2px solid #111;
+    margin-bottom: 28px;
+    background: transparent;
+  }
+  input:focus { outline: none; border-bottom-color: #666; }
+
+  .photo-box {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border: 2px dashed #999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-bottom: 24px;
+    overflow: hidden;
+    background: #fafafa;
+  }
+  .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+  .photo-box span { font-family: 'Courier New', monospace; font-size: 0.85rem; color: #666; }
+
+  button {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    background: #111;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    cursor: pointer;
+  }
+  button.secondary {
+    background: none;
+    color: #111;
+    border: 1px solid #111;
+    margin-right: 10px;
+  }
+  button:disabled { background: #ccc; cursor: not-allowed; }
+
+  .row { display: flex; justify-content: space-between; align-items: center; }
+  .error { color: #b00020; font-family: 'Courier New', monospace; font-size: 0.85rem; margin-top: -18px; margin-bottom: 20px; display: none; }
+  .note-hint { font-family: 'Courier New', monospace; font-size: 0.75rem; color: #999; margin-top: -20px; margin-bottom: 24px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1 id="pageTitle">Add Album</h1>
+  <a href="index.html">Catalogue</a>
+</header>
+
+<!-- Step 1: Front photo -->
+<div class="step active" id="step-front">
+  <div class="step-label">Step 1 of 7</div>
+  <h2>Photo — front</h2>
+  <div class="photo-box" id="frontBox">
+    <span>Tap to take photo</span>
+  </div>
+  <input type="file" accept="image/*" capture="environment" id="frontInput" style="display:none">
+  <div class="row">
+    <span></span>
+    <button id="frontNext" disabled onclick="goTo('step-back')">Next →</button>
+  </div>
+</div>
+
+<!-- Step 2: Back photo -->
+<div class="step" id="step-back">
+  <div class="step-label">Step 2 of 7</div>
+  <h2>Photo — back</h2>
+  <div class="photo-box" id="backBox">
+    <span>Tap to take photo</span>
+  </div>
+  <input type="file" accept="image/*" capture="environment" id="backInput" style="display:none">
+  <div class="row">
+    <button class="secondary" onclick="goTo('step-front')">← Back</button>
+    <button id="backNext" disabled onclick="goTo('step-artist')">Next →</button>
+  </div>
+</div>
+
+<!-- Step 3: Artist -->
+<div class="step" id="step-artist">
+  <div class="step-label">Step 3 of 7</div>
+  <h2>Artist name?</h2>
+  <input type="text" id="artistInput" placeholder="e.g. Fleetwood Mac">
+  <div class="error" id="artistError">Required.</div>
+  <div class="row">
+    <button class="secondary" onclick="goTo('step-back')">← Back</button>
+    <button onclick="validateAndGo('artistInput','artistError','step-album')">Next →</button>
+  </div>
+</div>
+
+<!-- Step 4: Album -->
+<div class="step" id="step-album">
+  <div class="step-label">Step 4 of 7</div>
+  <h2>Album name?</h2>
+  <input type="text" id="albumInput" placeholder="e.g. Rumours">
+  <div class="error" id="albumError">Required.</div>
+  <div class="row">
+    <button class="secondary" onclick="goTo('step-artist')">← Back</button>
+    <button onclick="validateAndGo('albumInput','albumError','step-genre')">Next →</button>
+  </div>
+</div>
+
+<!-- Step 5: Genre -->
+<div class="step" id="step-genre">
+  <div class="step-label">Step 5 of 7</div>
+  <h2>Genre?</h2>
+  <input type="text" id="genreInput" placeholder="e.g. Rock">
+  <div class="error" id="genreError">Required.</div>
+  <div class="row">
+    <button class="secondary" onclick="goTo('step-album')">← Back</button>
+    <button onclick="validateAndGo('genreInput','genreError','step-year')">Next →</button>
+  </div>
+</div>
+
+<!-- Step 6: Year -->
+<div class="step" id="step-year">
+  <div class="step-label">Step 6 of 7</div>
+  <h2>Year?</h2>
+  <input type="number" id="yearInput" placeholder="e.g. 1977">
+  <div class="error" id="yearError">Required.</div>
+  <div class="row">
+    <button class="secondary" onclick="goTo('step-genre')">← Back</button>
+    <button onclick="validateAndGo('yearInput','yearError','step-note')">Next →</button>
+  </div>
+</div>
+
+<!-- Step 7: Note -->
+<div class="step" id="step-note">
+  <div class="step-label">Step 7 of 7</div>
+  <h2>Any notes?</h2>
+  <input type="text" id="noteInput" placeholder="Optional">
+  <div class="note-hint">Optional — leave blank if none.</div>
+  <div class="row">
+    <button class="secondary" onclick="goTo('step-year')">← Back</button>
+    <button onclick="submitAlbum()">Add to catalogue</button>
+  </div>
+</div>
+
+<!-- Confirmation -->
+<div class="step" id="step-done">
+  <h2 id="doneMessage">Album added.</h2>
+  <p><a href="index.html">← Return to catalogue</a> or <a href="add.html">add another</a>.</p>
+</div>
+
+<script src="config.js"></script>
+<script>
+let frontBase64 = null;
+let backBase64 = null;
+
+document.getElementById('pageTitle').textContent = `Add ${ITEM_NAME}`;
+
+function goTo(stepId) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById(stepId).classList.add('active');
+}
+
+function validateAndGo(inputId, errorId, nextStep) {
+  const input = document.getElementById(inputId);
+  const error = document.getElementById(errorId);
+  if (!input.value.trim()) {
+    error.style.display = 'block';
+    return;
+  }
+  error.style.display = 'none';
+  goTo(nextStep);
+}
+
+function setupPhotoInput(boxId, inputId, onDone) {
+  const box = document.getElementById(boxId);
+  const input = document.getElementById(inputId);
+  box.addEventListener('click', () => input.click());
+  input.addEventListener('change', () => {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const fullDataUrl = reader.result;
+      const base64 = fullDataUrl.split(',')[1];
+      box.innerHTML = `<img src="${fullDataUrl}">`;
+      onDone(base64);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+setupPhotoInput('frontBox', 'frontInput', (b64) => {
+  frontBase64 = b64;
+  document.getElementById('frontNext').disabled = false;
+});
+
+setupPhotoInput('backBox', 'backInput', (b64) => {
+  backBase64 = b64;
+  document.getElementById('backNext').disabled = false;
+});
+
+async function submitAlbum() {
+  const noteInput = document.getElementById('noteInput');
+  const submitBtn = document.querySelector('#step-note button:not(.secondary)');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Saving…';
+
+  const pw = await ensureAuthenticated();
+
+  const payload = {
+    secret: pw,
+    artist: document.getElementById('artistInput').value.trim(),
+    album: document.getElementById('albumInput').value.trim(),
+    genre: document.getElementById('genreInput').value.trim(),
+    year: document.getElementById('yearInput').value.trim(),
+    note: noteInput.value.trim(),
+    frontPhotoBase64: frontBase64,
+    backPhotoBase64: backBase64
+  };
+
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    const result = await res.json();
+
+    if (result.status === 'success') {
+      document.getElementById('doneMessage').textContent = `${ITEM_NAME} added.`;
+      goTo('step-done');
+    } else {
+      alert('Something went wrong: ' + result.message);
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Add to catalogue';
+    }
+  } catch (err) {
+    alert('Network error — check your connection and try again.');
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Add to catalogue';
+  }
+}
+
+ensureAuthenticated();
+</script>
+</body>
+</html>
