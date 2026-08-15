@@ -93,7 +93,7 @@
 
 <header>
   <h1 id="pageTitle">Add Album</h1>
-  <a href="index.html">Catalogue</a>
+  <a href="index.html">Catalog</a>
 </header>
 
 <!-- Step 1: Front photo -->
@@ -180,14 +180,14 @@
   <div class="note-hint">Optional — leave blank if none.</div>
   <div class="row">
     <button class="secondary" onclick="goTo('step-year')">← Back</button>
-    <button onclick="submitAlbum()">Add to catalogue</button>
+    <button onclick="submitAlbum()">Add to catalog</button>
   </div>
 </div>
 
 <!-- Confirmation -->
 <div class="step" id="step-done">
   <h2 id="doneMessage">Album added.</h2>
-  <p><a href="index.html">← Return to catalogue</a> or <a href="add.html">add another</a>.</p>
+  <p><a href="index.html">← Return to catalog</a> or <a href="add.html">add another</a>.</p>
 </div>
 
 <script src="config.js"></script>
@@ -273,12 +273,12 @@ async function submitAlbum() {
     } else {
       alert('Something went wrong: ' + result.message);
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Add to catalogue';
+      submitBtn.textContent = 'Add to catalog';
     }
   } catch (err) {
     alert('Network error — check your connection and try again.');
     submitBtn.disabled = false;
-    submitBtn.textContent = 'Add to catalogue';
+    submitBtn.textContent = 'Add to catalog';
   }
 }
 
