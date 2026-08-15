@@ -214,6 +214,9 @@
 let frontBase64 = null;
 let backBase64 = null;
 
+let cropper = null;
+let cropTarget = null; // 'front' or 'back'
+
 document.getElementById('pageTitle').textContent = `Add ${ITEM_NAME}`;
 
 function goTo(stepId) {
@@ -253,7 +256,7 @@ function resizeImage(file, maxWidth) {
   });
 }
 
-function setupPhotoInput(boxId, inputId, onDone) {
+function setupPhotoInput(boxId, inputId, target) {
   const box = document.getElementById(boxId);
   const input = document.getElementById(inputId);
   box.addEventListener('click', () => input.click());
@@ -262,21 +265,66 @@ function setupPhotoInput(boxId, inputId, onDone) {
     if (!file) return;
     box.innerHTML = `<span>Processing…</span>`;
     const dataUrl = await resizeImage(file, 1200);
-    const base64 = dataUrl.split(',')[1];
-    box.innerHTML = `<img src="${dataUrl}">`;
-    onDone(base64);
+    openCropStep(dataUrl, target);
   });
 }
 
-setupPhotoInput('frontBox', 'frontInput', (b64) => {
-  frontBase64 = b64;
-  document.getElementById('frontNext').disabled = false;
-});
+function openCropStep(dataUrl, target) {
+  cropTarget = target;
+  document.getElementById('cropLabel').textContent =
+    target === 'front' ? 'Adjust front photo' : 'Adjust back photo';
 
-setupPhotoInput('backBox', 'backInput', (b64) => {
-  backBase64 = b64;
-  document.getElementById('backNext').disabled = false;
-});
+  const cropImage = document.getElementById('cropImage');
+  cropImage.src = dataUrl;
+  document.getElementById('rotateSlider').value = 0;
+
+  goTo('step-crop');
+
+  if (cropper) {
+    cropper.destroy();
+  }
+  cropper = new Cropper(cropImage, {
+    aspectRatio: 1,
+    viewMode: 1,
+    autoCropArea: 1,
+    background: false
+  });
+
+  document.getElementById('rotateSlider').oninput = (e) => {
+    cropper.rotateTo(Number(e.target.value));
+  };
+}
+
+function cancelCrop() {
+  if (cropper) {
+    cropper.destroy();
+    cropper = null;
+  }
+  goTo(cropTarget === 'front' ? 'step-front' : 'step-back');
+}
+
+function confirmCrop() {
+  const canvas = cropper.getCroppedCanvas({ width: 1000, height: 1000 });
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+  const base64 = dataUrl.split(',')[1];
+
+  if (cropTarget === 'front') {
+    frontBase64 = base64;
+    document.getElementById('frontBox').innerHTML = `<img src="${dataUrl}">`;
+    document.getElementById('frontNext').disabled = false;
+  } else {
+    backBase64 = base64;
+    document.getElementById('backBox').innerHTML = `<img src="${dataUrl}">`;
+    document.getElementById('backNext').disabled = false;
+  }
+
+  cropper.destroy();
+  cropper = null;
+  goTo(cropTarget === 'front' ? 'step-front' : 'step-back');
+}
+
+setupPhotoInput('frontBox', 'frontInput', 'front');
+setupPhotoInput('backBox', 'backInput', 'back');
 
 async function submitAlbum() {
   const noteInput = document.getElementById('noteInput');
