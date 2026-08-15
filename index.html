@@ -218,7 +218,7 @@ function flipListCover(imgEl, i) {
 }
 
 function showCarouselDetails(i) {
-  const entry = allEntries[i];
+  const entry = visibleEntries[i];
   if (!entry) return;
   document.getElementById('carouselDetails').innerHTML = `
     <div class="entry">
