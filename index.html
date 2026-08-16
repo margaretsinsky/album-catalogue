@@ -312,6 +312,7 @@ function flipCover(imgEl, i) {
 
   setTimeout(() => {
     imgEl.classList.remove('flipping');
+    imgEl.style.transform = '';
   }, 350);
 
   imgEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
