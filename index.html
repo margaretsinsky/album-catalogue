@@ -142,13 +142,13 @@ let currentView = 'carousel';
     }
 
     statusEl.textContent = '';
-    const plural = data.length === 1 ? ITEM_NAME.toLowerCase() : `${ITEM_NAME.toLowerCase()}s`;
-    document.getElementById('countFooter').textContent = `${data.length} ${plural}`;
 
     allEntries = data;
     visibleEntries = data;
    
    renderCarousel();
+
+   updateCount();
    
    renderListView();
 
@@ -177,6 +177,12 @@ function applySearch() {
   if (currentView === 'carousel') {
     renderCarousel();
   }
+  updateCount();
+}
+
+function updateCount() {
+  const plural = visibleEntries.length === 1 ? ITEM_NAME.toLowerCase() : `${ITEM_NAME.toLowerCase()}s`;
+  document.getElementById('countFooter').textContent = `${visibleEntries.length} ${plural}`;
 }
 
 function applySort() {
