@@ -225,9 +225,12 @@ function renderListView() {
   const entriesEl = document.getElementById('entries');
   entriesEl.innerHTML = visibleEntries.map((entry, i) => `
     <div class="entry">
-      <img class="cover" src="${driveImageUrl(entry.FrontPhotoURL)}" alt="${escapeHtml(entry.Album)} cover"
-           loading="lazy" data-showing="front" style="cursor: pointer;"
-           onclick="flipListCover(this, ${i})">
+      <div class="cover-flip" onclick="flipListCover(this, ${i})">
+        <div class="flip-inner" data-rotation="0">
+          <img class="flip-face front" src="${driveImageUrl(entry.FrontPhotoURL)}" alt="${escapeHtml(entry.Album)} cover" loading="lazy">
+          <img class="flip-face back" src="${driveImageUrl(entry.BackPhotoURL)}" alt="${escapeHtml(entry.Album)} back" loading="lazy">
+        </div>
+      </div>
       <p class="title">${escapeHtml(entry.Album)}</p>
       <p class="artist">${escapeHtml(entry.Artist)}</p>
       <p class="meta">${escapeHtml(entry.Genre)} · ${escapeHtml(String(entry.Year))}</p>
