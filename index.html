@@ -41,9 +41,13 @@
   scroll-snap-align: center;
   cursor: pointer;
   transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-style: preserve-3d;
 }
 .carousel-cover.selected {
   transform: scale(1.18);
+}
+.carousel-cover.flipping {
+  transition: transform 0.35s ease-in-out, scale 0.35s ease-in-out;
 }
   .entry .title { font-size: 1.15rem; margin: 0 0 4px; }
   .entry .artist { font-size: 1rem; color: #333; margin: 0 0 8px; }
@@ -287,15 +291,36 @@ function renderCarousel() {
 function flipCover(imgEl, i) {
   const entry = visibleEntries[i];
   const showingFront = imgEl.dataset.showing === 'front';
-  imgEl.src = driveImageUrl(showingFront ? entry.BackPhotoURL : entry.FrontPhotoURL);
-  imgEl.dataset.showing = showingFront ? 'back' : 'front';
+
+  imgEl.classList.add('flipping');
+  imgEl.style.transform = (imgEl.classList.contains('selected') ? 'scale(1.18) ' : '') + 'rotateY(90deg)';
+
+  setTimeout(() => {
+    imgEl.src = driveImageUrl(showingFront ? entry.BackPhotoURL : entry.FrontPhotoURL);
+    imgEl.dataset.showing = showingFront ? 'back' : 'front';
+    imgEl.style.transform = (imgEl.classList.contains('selected') ? 'scale(1.18) ' : '') + 'rotateY(0deg)';
+  }, 175);
+
+  setTimeout(() => {
+    imgEl.classList.remove('flipping');
+    imgEl.style.transform = '';
+  }, 350);
+
   imgEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
 }
+ 
 function flipListCover(imgEl, i) {
   const entry = visibleEntries[i];
   const showingFront = imgEl.dataset.showing === 'front';
-  imgEl.src = driveImageUrl(showingFront ? entry.BackPhotoURL : entry.FrontPhotoURL);
-  imgEl.dataset.showing = showingFront ? 'back' : 'front';
+
+  imgEl.style.transition = 'transform 0.35s ease-in-out';
+  imgEl.style.transform = 'rotateY(90deg)';
+
+  setTimeout(() => {
+    imgEl.src = driveImageUrl(showingFront ? entry.BackPhotoURL : entry.FrontPhotoURL);
+    imgEl.dataset.showing = showingFront ? 'back' : 'front';
+    imgEl.style.transform = 'rotateY(0deg)';
+  }, 175);
 }
 
 function showCarouselDetails(i) {
