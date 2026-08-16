@@ -249,7 +249,7 @@ function renderCarousel() {
     <img class="carousel-cover" src="${driveImageUrl(entry.FrontPhotoURL)}"
          alt="${escapeHtml(entry.Album)}" data-index="${i}" data-showing="front"
          onclick="flipCover(this, ${i})">
-  `).join('') + `<div style="flex: 0 0 10px;"></div>`;
+  `).join('') + `<div style="flex: 0 0 40vw;"></div>`;
   track.querySelectorAll('.carousel-cover').forEach(img => {
     img.addEventListener('load', () => {
       if (track.dataset.initialized) return;
