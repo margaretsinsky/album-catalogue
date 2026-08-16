@@ -58,6 +58,9 @@
     margin-top: 6px;
     font-style: italic;
   }
+ body:not(.show-notes) .note {
+  display: none;
+}
 </style>
 </head>
 <body>
@@ -93,8 +96,14 @@
   <div id="carouselDetails" style="margin-top: 20px; min-height: 100px;"></div>
 </div>
  
-<div id="countFooter" style="text-align: right; font-family: 'Courier New', monospace; font-size: 0.8rem; color: #666; margin-top: 20px;"></div>
-
+<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+  <label style="font-family: 'Courier New', monospace; font-size: 0.75rem; color: #999; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+    <input type="checkbox" id="showNotesToggle" onchange="toggleNotes()">
+    Show notes
+  </label>
+  <div id="countFooter" style="text-align: right; font-family: 'Courier New', monospace; font-size: 0.8rem; color: #666;"></div>
+</div>
+ 
 <script src="config.js"></script>
 <script>
 document.getElementById('pageTitleTag').textContent = `The Whole ${ITEM_NAME} Catalog`;
@@ -191,6 +200,10 @@ function applySort() {
       || (a.Artist || '').localeCompare(b.Artist || '')
       || (a.Album || '').localeCompare(b.Album || '');
   });
+}
+
+function toggleNotes() {
+  document.body.classList.toggle('show-notes', document.getElementById('showNotesToggle').checked);
 }
 
 function renderListView() {
