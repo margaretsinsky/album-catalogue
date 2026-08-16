@@ -51,7 +51,7 @@
   transform: scale(1.18);
 }
 .carousel-cover.flipping {
-  transition: transform 0.35s ease-in-out, scale 0.35s ease-in-out;
+  transition: transform 0.35s ease-in-out;
 }
   .entry .title { font-size: 1.15rem; margin: 0 0 4px; }
   .entry .artist { font-size: 1rem; color: #333; margin: 0 0 8px; }
@@ -295,12 +295,14 @@ function flipCover(imgEl, i) {
   const entry = visibleEntries[i];
   const showingFront = imgEl.dataset.showing === 'front';
   const scale = imgEl.classList.contains('selected') ? 'scale(1.18) ' : '';
+  const delta = showingFront ? -180 : 180;
 
   const currentRotation = parseInt(imgEl.dataset.rotation || '0', 10);
-  const newRotation = currentRotation - 180;
+  const newRotation = currentRotation + delta;
   imgEl.dataset.rotation = newRotation;
 
   imgEl.classList.add('flipping');
+  void imgEl.offsetWidth;
   imgEl.style.transform = `${scale}rotateY(${newRotation}deg)`;
 
   setTimeout(() => {
@@ -318,12 +320,14 @@ function flipCover(imgEl, i) {
 function flipListCover(imgEl, i) {
   const entry = visibleEntries[i];
   const showingFront = imgEl.dataset.showing === 'front';
+  const delta = showingFront ? -180 : 180;
 
   const currentRotation = parseInt(imgEl.dataset.rotation || '0', 10);
-  const newRotation = currentRotation - 180;
+  const newRotation = currentRotation + delta;
   imgEl.dataset.rotation = newRotation;
 
   imgEl.style.transition = 'transform 0.35s ease-in-out';
+  void imgEl.offsetWidth;
   imgEl.style.transform = `rotateY(${newRotation}deg)`;
 
   setTimeout(() => {
