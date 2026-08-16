@@ -166,7 +166,7 @@ function applySearch() {
   } else {
     visibleEntries = allEntries.filter(entry => {
       const haystack = [
-        entry.Artist, entry.Album, entry.Genre, entry.Year, entry.Note
+        entry.Artist, entry.Album, entry.Genre, entry.Year, entry.Notes
       ].map(v => String(v ?? '').toLowerCase()).join(' ');
       return haystack.includes(query);
     });
@@ -222,7 +222,7 @@ function renderListView() {
       <p class="title">${escapeHtml(entry.Album)}</p>
       <p class="artist">${escapeHtml(entry.Artist)}</p>
       <p class="meta">${escapeHtml(entry.Genre)} · ${escapeHtml(String(entry.Year))}</p>
-      ${entry.Note ? `<p class="note">Notes: ${escapeHtml(entry.Note)}</p>` : ''}
+      ${entry.Note ? `<p class="note">Notes: ${escapeHtml(entry.Notes)}</p>` : ''}
     </div>
   `).join('');
 }
@@ -307,7 +307,7 @@ function showCarouselDetails(i) {
       <p class="title">${escapeHtml(entry.Album)}</p>
       <p class="artist">${escapeHtml(entry.Artist)}</p>
       <p class="meta">${escapeHtml(entry.Genre)} · ${escapeHtml(String(entry.Year))}</p>
-      ${entry.Note ? `<p class="note">Notes: ${escapeHtml(entry.Note)}</p>` : ''}
+      ${entry.Note ? `<p class="note">Notes: ${escapeHtml(entry.Notes)}</p>` : ''}
     </div>
   `;
 }
