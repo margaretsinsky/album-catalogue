@@ -295,42 +295,26 @@ function renderCarousel() {
   });
 }
 
-function flipCover(imgEl, i) {
-  const entry = visibleEntries[i];
-  const showingFront = imgEl.dataset.showing === 'front';
+function flipCover(coverEl, i) {
+  const inner = coverEl.querySelector('.flip-inner');
+  const currentRotation = parseInt(inner.dataset.rotation || '0', 10);
+  const showingFront = currentRotation % 360 === 0;
   const delta = showingFront ? -180 : 180;
-
-  const currentRotation = parseInt(imgEl.dataset.rotation || '0', 10);
   const newRotation = currentRotation + delta;
-  imgEl.dataset.rotation = newRotation;
+  inner.dataset.rotation = newRotation;
+  inner.style.transform = `rotateY(${newRotation}deg)`;
 
-  imgEl.style.transform = `rotateY(${newRotation}deg)`;
-
-  setTimeout(() => {
-    imgEl.src = driveImageUrl(showingFront ? entry.BackPhotoURL : entry.FrontPhotoURL);
-    imgEl.dataset.showing = showingFront ? 'back' : 'front';
-  }, 175);
-
-  imgEl.closest('.carousel-cover-wrap').scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  coverEl.closest('.carousel-cover-wrap').scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
 }
  
-function flipListCover(imgEl, i) {
-  const entry = visibleEntries[i];
-  const showingFront = imgEl.dataset.showing === 'front';
+function flipListCover(coverEl, i) {
+  const inner = coverEl.querySelector('.flip-inner');
+  const currentRotation = parseInt(inner.dataset.rotation || '0', 10);
+  const showingFront = currentRotation % 360 === 0;
   const delta = showingFront ? -180 : 180;
-
-  const currentRotation = parseInt(imgEl.dataset.rotation || '0', 10);
   const newRotation = currentRotation + delta;
-  imgEl.dataset.rotation = newRotation;
-
-  imgEl.style.transition = 'transform 0.35s ease-in-out';
-  void imgEl.offsetWidth;
-  imgEl.style.transform = `rotateY(${newRotation}deg)`;
-
-  setTimeout(() => {
-    imgEl.src = driveImageUrl(showingFront ? entry.BackPhotoURL : entry.FrontPhotoURL);
-    imgEl.dataset.showing = showingFront ? 'back' : 'front';
-  }, 175);
+  inner.dataset.rotation = newRotation;
+  inner.style.transform = `rotateY(${newRotation}deg)`;
 }
 
 function showCarouselDetails(i) {
