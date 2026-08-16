@@ -29,10 +29,12 @@
   #status { font-family: 'Courier New', monospace; font-size: 0.85rem; color: #666; }
 
   .entry {
-    border-bottom: 1px solid #ddd;
-    padding: 16px 0;
-  }
-  .entry .cover { width: 100%; max-width: 300px; display: block; margin-bottom: 12px; border: 1px solid #ddd; perspective: 800px; }
+  border-bottom: 1px solid #ddd;
+  padding: 16px 0;
+  perspective: 800px;
+}
+  
+  .entry .cover { width: 100%; max-width: 300px; display: block; margin-bottom: 12px; border: 1px solid #ddd; }
 
   .carousel-cover {
   flex: 0 0 200px;
@@ -43,8 +45,8 @@
   cursor: pointer;
   transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   transform-style: preserve-3d;
-  perspective: 800px;
 }
+ 
 .carousel-cover.selected {
   transform: scale(1.18);
 }
@@ -98,7 +100,7 @@
 </div>
 
 <div id="carouselView">
-  <div id="carouselTrack" style="display: flex; align-items: center; gap: 28px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 24px 0 44px;"></div>
+  <div id="carouselTrack" style="display: flex; align-items: center; gap: 28px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 24px 0 44px; perspective: 800px;"></div>
   <div id="carouselDetails" style="margin-top: 20px; min-height: 100px;"></div>
 </div>
  
