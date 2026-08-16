@@ -40,7 +40,7 @@
   border: 1px solid #ddd;
   scroll-snap-align: center;
   cursor: pointer;
-  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .carousel-cover.selected {
   transform: scale(1.18);
@@ -249,7 +249,7 @@ function renderCarousel() {
     <img class="carousel-cover" src="${driveImageUrl(entry.FrontPhotoURL)}"
          alt="${escapeHtml(entry.Album)}" data-index="${i}" data-showing="front"
          onclick="flipCover(this, ${i})">
-  `).join('') + `<div style="flex: 0 0 40px;"></div>`;
+  `).join('') + `<div style="flex: 0 0 10px;"></div>`;
   track.querySelectorAll('.carousel-cover').forEach(img => {
     img.addEventListener('load', () => {
       if (track.dataset.initialized) return;
