@@ -156,7 +156,7 @@ let currentView = 'carousel';
     visibleEntries = data;
 
     applySort();
-    ousel();
+    renderCarousel();
     updateCount();
     renderListView();
 
@@ -183,7 +183,7 @@ function applySearch() {
   applySort();
   renderListView();
   if (currentView === 'carousel') {
-    ousel();
+    renderCarousel();
   }
   updateCount();
 }
@@ -242,7 +242,7 @@ function toggleView() {
     document.getElementById('listView').style.display = 'none';
     document.getElementById('carouselView').style.display = 'block';
     btn.textContent = 'Switch to list';
-    ousel();
+    renderCarousel();
   } else {
     currentView = 'list';
     document.getElementById('listView').style.display = 'block';
