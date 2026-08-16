@@ -263,10 +263,11 @@ function renderCarousel() {
     });
   });
   if (visibleEntries.length > 0) {
-  showCarouselDetails(0);
-  const firstImg = track.querySelector('.carousel-cover[data-index="0"]');
-  if (firstImg) {
-    track.scrollLeft = firstImg.offsetLeft - (track.clientWidth - firstImg.offsetWidth) / 2;
+  const startIndex = Math.min(2, visibleEntries.length - 1);
+  showCarouselDetails(startIndex);
+  const startImg = track.querySelector(`.carousel-cover[data-index="${startIndex}"]`);
+  if (startImg) {
+    track.scrollLeft = startImg.offsetLeft - (track.clientWidth - startImg.offsetWidth) / 2;
   }
 }
   let scrollTimeout;
