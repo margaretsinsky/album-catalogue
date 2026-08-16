@@ -25,36 +25,47 @@
   }
   header h1 { font-size: 1.1rem; margin: 0; font-weight: normal; letter-spacing: 0.5px; }
   header a { font-size: 0.85rem; text-decoration: none; border: 1px solid #111; padding: 4px 10px; }
-
   #status { font-family: 'Courier New', monospace; font-size: 0.85rem; color: #666; }
-
   .entry {
-  border-bottom: 1px solid #ddd;
-  padding: 16px 0;
-  perspective: 800px;
-}
-  
- .entry .cover { width: 100%; max-width: 300px; display: block; margin-bottom: 12px; border: 1px solid #ddd; backface-visibility: hidden; }
-
- .carousel-cover-wrap {
-  flex: 0 0 200px;
-  height: 200px;
-  scroll-snap-align: center;
-  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.carousel-cover-wrap.selected {
-  transform: scale(1.18);
-}
-.carousel-cover {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border: 1px solid #ddd;
-  cursor: pointer;
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-  transition: transform 0.35s ease-in-out;
-}
+    border-bottom: 1px solid #ddd;
+    padding: 16px 0;
+  }
+  .cover-flip { width: 100%; max-width: 300px; aspect-ratio: 1 / 1; cursor: pointer; perspective: 800px; margin-bottom: 12px; }
+  .carousel-cover-wrap {
+    flex: 0 0 200px;
+    height: 200px;
+    scroll-snap-align: center;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .carousel-cover-wrap.selected {
+    transform: scale(1.18);
+  }
+  .carousel-cover {
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    perspective: 800px;
+  }
+  .flip-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.35s ease-in-out;
+  }
+  .flip-face {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    backface-visibility: hidden;
+  }
+  .flip-face.back {
+    transform: rotateY(180deg);
+  }
   .entry .title { font-size: 1.15rem; margin: 0 0 4px; }
   .entry .artist { font-size: 1rem; color: #333; margin: 0 0 8px; }
   .entry .meta {
@@ -63,14 +74,14 @@
     color: #666;
   }
   .entry .note {
-  font-size: 0.85rem;
-  color: #999;
-  margin-top: 6px;
-  font-style: italic;
-}
- body:not(.show-notes) .note {
-  display: none;
-}
+    font-size: 0.85rem;
+    color: #999;
+    margin-top: 6px;
+    font-style: italic;
+  }
+  body:not(.show-notes) .note {
+    display: none;
+  }
 </style>
 </head>
 <body>
