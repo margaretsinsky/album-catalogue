@@ -256,16 +256,15 @@ function renderCarousel() {
   const track = document.getElementById('carouselTrack');
   track.innerHTML = `<div style="flex: 0 0 40vw;"></div>` + visibleEntries.map((entry, i) => `
     <div class="carousel-cover-wrap" data-index="${i}">
-      <img class="carousel-cover" src="${driveImageUrl(entry.FrontPhotoURL)}"
-           alt="${escapeHtml(entry.Album)}" data-showing="front"
-           onclick="flipCover(this, ${i})">
+      <div class="carousel-cover" onclick="flipCover(this, ${i})">
+        <div class="flip-inner" data-rotation="0">
+          <img class="flip-face front" src="${driveImageUrl(entry.FrontPhotoURL)}" alt="${escapeHtml(entry.Album)}">
+          <img class="flip-face back" src="${driveImageUrl(entry.BackPhotoURL)}" alt="${escapeHtml(entry.Album)} back">
+        </div>
+      </div>
     </div>
   `).join('') + `<div style="flex: 0 0 40vw;"></div>`;
-  track.querySelectorAll('.carousel-cover').forEach(img => {
-    img.addEventListener('load', () => {
-      if (track.dataset.initialized) return;
-    });
-  });
+ 
   if (visibleEntries.length > 0) {
   const startIndex = Math.min(2, visibleEntries.length - 1);
   showCarouselDetails(startIndex);
