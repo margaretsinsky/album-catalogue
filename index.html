@@ -33,17 +33,18 @@
     padding: 16px 0;
   }
   .entry .cover { width: 100%; max-width: 300px; display: block; margin-bottom: 12px; border: 1px solid #ddd; }
-  .carousel-cover {
+.carousel-cover {
   flex: 0 0 200px;
   height: 200px;
   object-fit: cover;
   border: 1px solid #ddd;
   scroll-snap-align: center;
   cursor: pointer;
-  transition: transform 0.12s ease;
+  transition: flex-basis 0.12s ease, height 0.12s ease;
 }
 .carousel-cover.selected {
-  transform: scale(1.18);
+  flex-basis: 236px;
+  height: 236px;
 }
   .entry .title { font-size: 1.15rem; margin: 0 0 4px; }
   .entry .artist { font-size: 1rem; color: #333; margin: 0 0 8px; }
