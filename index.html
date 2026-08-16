@@ -153,12 +153,11 @@ let currentView = 'carousel';
 
     allEntries = data;
     visibleEntries = data;
-   
-   renderCarousel();
 
-   updateCount();
-   
-   renderListView();
+    applySort();
+    renderCarousel();
+    updateCount();
+    renderListView();
 
   } catch (err) {
   clearTimeout(slowLoadTimer);
