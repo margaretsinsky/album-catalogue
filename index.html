@@ -36,21 +36,22 @@
   
   .entry .cover { width: 100%; max-width: 300px; display: block; margin-bottom: 12px; border: 1px solid #ddd; }
 
-  .carousel-cover {
+ .carousel-cover-wrap {
   flex: 0 0 200px;
   height: 200px;
-  object-fit: cover;
-  border: 1px solid #ddd;
   scroll-snap-align: center;
-  cursor: pointer;
   transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-  transform-style: preserve-3d;
 }
- 
-.carousel-cover.selected {
+.carousel-cover-wrap.selected {
   transform: scale(1.18);
 }
-.carousel-cover.flipping {
+.carousel-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  transform-style: preserve-3d;
   transition: transform 0.35s ease-in-out;
 }
   .entry .title { font-size: 1.15rem; margin: 0 0 4px; }
@@ -155,7 +156,7 @@ let currentView = 'carousel';
     visibleEntries = data;
 
     applySort();
-    renderCarousel();
+    ousel();
     updateCount();
     renderListView();
 
@@ -182,7 +183,7 @@ function applySearch() {
   applySort();
   renderListView();
   if (currentView === 'carousel') {
-    renderCarousel();
+    ousel();
   }
   updateCount();
 }
@@ -241,7 +242,7 @@ function toggleView() {
     document.getElementById('listView').style.display = 'none';
     document.getElementById('carouselView').style.display = 'block';
     btn.textContent = 'Switch to list';
-    renderCarousel();
+    ousel();
   } else {
     currentView = 'list';
     document.getElementById('listView').style.display = 'block';
@@ -253,9 +254,11 @@ function toggleView() {
 function renderCarousel() {
   const track = document.getElementById('carouselTrack');
   track.innerHTML = `<div style="flex: 0 0 40vw;"></div>` + visibleEntries.map((entry, i) => `
-    <img class="carousel-cover" src="${driveImageUrl(entry.FrontPhotoURL)}"
-         alt="${escapeHtml(entry.Album)}" data-index="${i}" data-showing="front"
-         onclick="flipCover(this, ${i})">
+    <div class="carousel-cover-wrap" data-index="${i}">
+      <img class="carousel-cover" src="${driveImageUrl(entry.FrontPhotoURL)}"
+           alt="${escapeHtml(entry.Album)}" data-showing="front"
+           onclick="flipCover(this, ${i})">
+    </div>
   `).join('') + `<div style="flex: 0 0 40vw;"></div>`;
   track.querySelectorAll('.carousel-cover').forEach(img => {
     img.addEventListener('load', () => {
@@ -265,9 +268,9 @@ function renderCarousel() {
   if (visibleEntries.length > 0) {
   const startIndex = Math.min(2, visibleEntries.length - 1);
   showCarouselDetails(startIndex);
-  const startImg = track.querySelector(`.carousel-cover[data-index="${startIndex}"]`);
-  if (startImg) {
-    track.scrollLeft = startImg.offsetLeft - (track.clientWidth - startImg.offsetWidth) / 2;
+  const startWrap = track.querySelector(`.carousel-cover-wrap[data-index="${startIndex}"]`);
+  if (startWrap) {
+    track.scrollLeft = startWrap.offsetLeft - (track.clientWidth - startWrap.offsetWidth) / 2;
   }
 }
   let scrollTimeout;
@@ -278,9 +281,9 @@ function renderCarousel() {
       const center = trackRect.left + trackRect.width / 2;
       let closest = 0;
       let closestDist = Infinity;
-      track.querySelectorAll('.carousel-cover').forEach((img, i) => {
-        const rect = img.getBoundingClientRect();
-        const imgCenter = rect.left + rect.width / 2;
+      track.querySelectorAll('.carousel-cover-wrap').forEach((wrap, i) => {
+      const rect = wrap.getBoundingClientRect();
+      const imgCenter = rect.left + rect.width / 2;
         const dist = Math.abs(imgCenter - center);
         if (dist < closestDist) {
           closestDist = dist;
@@ -295,28 +298,20 @@ function renderCarousel() {
 function flipCover(imgEl, i) {
   const entry = visibleEntries[i];
   const showingFront = imgEl.dataset.showing === 'front';
-  const scale = imgEl.classList.contains('selected') ? 'scale(1.18) ' : '';
   const delta = showingFront ? -180 : 180;
 
   const currentRotation = parseInt(imgEl.dataset.rotation || '0', 10);
   const newRotation = currentRotation + delta;
   imgEl.dataset.rotation = newRotation;
 
-  imgEl.classList.add('flipping');
-  void imgEl.offsetWidth;
-  imgEl.style.transform = `${scale}rotateY(${newRotation}deg)`;
+  imgEl.style.transform = `rotateY(${newRotation}deg)`;
 
   setTimeout(() => {
     imgEl.src = driveImageUrl(showingFront ? entry.BackPhotoURL : entry.FrontPhotoURL);
     imgEl.dataset.showing = showingFront ? 'back' : 'front';
   }, 175);
 
-  setTimeout(() => {
-    imgEl.classList.remove('flipping');
-    imgEl.style.transform = '';
-  }, 350);
-
-  imgEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  imgEl.closest('.carousel-cover-wrap').scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
 }
  
 function flipListCover(imgEl, i) {
@@ -342,9 +337,9 @@ function showCarouselDetails(i) {
   const entry = visibleEntries[i];
   if (!entry) return;
 
-  document.querySelectorAll('.carousel-cover.selected').forEach(el => el.classList.remove('selected'));
-  const selectedImg = document.querySelector(`.carousel-cover[data-index="${i}"]`);
-  if (selectedImg) selectedImg.classList.add('selected');
+  document.querySelectorAll('.carousel-cover-wrap.selected').forEach(el => el.classList.remove('selected'));
+  const selectedWrap = document.querySelector(`.carousel-cover-wrap[data-index="${i}"]`);
+  if (selectedWrap) selectedWrap.classList.add('selected');
 
   document.getElementById('carouselDetails').innerHTML = `
     <div class="entry">
