@@ -32,8 +32,9 @@
     border-bottom: 1px solid #ddd;
     padding: 16px 0;
   }
-  .entry .cover { width: 100%; max-width: 300px; display: block; margin-bottom: 12px; border: 1px solid #ddd; }
-.carousel-cover {
+  .entry .cover { width: 100%; max-width: 300px; display: block; margin-bottom: 12px; border: 1px solid #ddd; perspective: 800px; }
+
+  .carousel-cover {
   flex: 0 0 200px;
   height: 200px;
   object-fit: cover;
@@ -42,6 +43,7 @@
   cursor: pointer;
   transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   transform-style: preserve-3d;
+  perspective: 800px;
 }
 .carousel-cover.selected {
   transform: scale(1.18);
