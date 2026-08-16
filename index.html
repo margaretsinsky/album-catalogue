@@ -34,7 +34,7 @@
   perspective: 800px;
 }
   
-  .entry .cover { width: 100%; max-width: 300px; display: block; margin-bottom: 12px; border: 1px solid #ddd; }
+ .entry .cover { width: 100%; max-width: 300px; display: block; margin-bottom: 12px; border: 1px solid #ddd; backface-visibility: hidden; }
 
  .carousel-cover-wrap {
   flex: 0 0 200px;
@@ -52,6 +52,7 @@
   border: 1px solid #ddd;
   cursor: pointer;
   transform-style: preserve-3d;
+  backface-visibility: hidden;
   transition: transform 0.35s ease-in-out;
 }
   .entry .title { font-size: 1.15rem; margin: 0 0 4px; }
@@ -304,23 +305,12 @@ function flipCover(imgEl, i) {
   const newRotation = currentRotation + delta;
   imgEl.dataset.rotation = newRotation;
 
-  let swapped = false;
-  const onFrame = () => {
-    const style = getComputedStyle(imgEl).transform;
-    if (style && style !== 'none') {
-      const matrix = new DOMMatrix(style);
-      if (!swapped && Math.abs(matrix.m11) < 0.02) {
-        swapped = true;
-        imgEl.src = driveImageUrl(showingFront ? entry.BackPhotoURL : entry.FrontPhotoURL);
-        imgEl.dataset.showing = showingFront ? 'back' : 'front';
-        return;
-      }
-    }
-    if (!swapped) requestAnimationFrame(onFrame);
-  };
-  requestAnimationFrame(onFrame);
-
   imgEl.style.transform = `rotateY(${newRotation}deg)`;
+
+  setTimeout(() => {
+    imgEl.src = driveImageUrl(showingFront ? entry.BackPhotoURL : entry.FrontPhotoURL);
+    imgEl.dataset.showing = showingFront ? 'back' : 'front';
+  }, 175);
 
   imgEl.closest('.carousel-cover-wrap').scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
 }
@@ -334,25 +324,14 @@ function flipListCover(imgEl, i) {
   const newRotation = currentRotation + delta;
   imgEl.dataset.rotation = newRotation;
 
-  let swapped = false;
-  const onFrame = () => {
-    const style = getComputedStyle(imgEl).transform;
-    if (style && style !== 'none') {
-      const matrix = new DOMMatrix(style);
-      if (!swapped && Math.abs(matrix.m11) < 0.02) {
-        swapped = true;
-        imgEl.src = driveImageUrl(showingFront ? entry.BackPhotoURL : entry.FrontPhotoURL);
-        imgEl.dataset.showing = showingFront ? 'back' : 'front';
-        return;
-      }
-    }
-    if (!swapped) requestAnimationFrame(onFrame);
-  };
-  requestAnimationFrame(onFrame);
-
   imgEl.style.transition = 'transform 0.35s ease-in-out';
   void imgEl.offsetWidth;
   imgEl.style.transform = `rotateY(${newRotation}deg)`;
+
+  setTimeout(() => {
+    imgEl.src = driveImageUrl(showingFront ? entry.BackPhotoURL : entry.FrontPhotoURL);
+    imgEl.dataset.showing = showingFront ? 'back' : 'front';
+  }, 175);
 }
 
 function showCarouselDetails(i) {
