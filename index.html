@@ -286,6 +286,8 @@ function renderCarousel() {
   if (startWrap) {
     track.scrollLeft = startWrap.offsetLeft - (track.clientWidth - startWrap.offsetWidth) / 2;
   }
+} else {
+  document.getElementById('carouselDetails').innerHTML = '';
 }
   let scrollTimeout;
   track.addEventListener('scroll', () => {
