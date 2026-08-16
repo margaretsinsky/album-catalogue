@@ -257,10 +257,12 @@ function renderCarousel() {
   });
   if (visibleEntries.length > 0) {
   showCarouselDetails(0);
-  const firstImg = track.querySelector('.carousel-cover[data-index="0"]');
-  if (firstImg) {
-    firstImg.scrollIntoView({ behavior: 'instant', inline: 'center', block: 'nearest' });
-  }
+  requestAnimationFrame(() => {
+    const firstImg = track.querySelector('.carousel-cover[data-index="0"]');
+    if (firstImg) {
+      firstImg.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' });
+    }
+  });
 }
   let scrollTimeout;
   track.addEventListener('scroll', () => {
